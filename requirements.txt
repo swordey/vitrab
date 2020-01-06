@@ -1,0 +1,4 @@
+bokeh==1.4.0
+numpy==1.18.0
+pandas==0.22.0
+pandas-datareader==0.8.1
