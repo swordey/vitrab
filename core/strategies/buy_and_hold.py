@@ -9,27 +9,24 @@ class BuyAndHold(BaseStrategy):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.signals = None
-
     def init_signals(self):
-        self.signals = pd.DataFrame(dict(Date=[],
-                                         signal=[],
-                                         positions=[]))
-        self.signals.set_index("Date", inplace=True)
+        for ticker in self.tickers:
+            self.signals[ticker] = pd.DataFrame(dict(Date=[],
+                                             signal=[],
+                                             positions=[]))
+            self.signals[ticker].set_index("Date", inplace=True)
 
-    def handle_data(self, history):
-        self.i += 1
-        if self.i == 1:
-            self.init_signals()
-            signal = 0.0
-            position = 0.0
-        else:
-            signal = 1.0
-            position = signal - self.signals.iloc[-1].signal
-
-        self.signals.loc[history.iloc[-1].name] = [position, signal]
-
-        self.portfolio_manager.update(self.signals, history)
+    def calc_signals(self, history):
+        for ticker in self.tickers:
+            if self.i == 1:
+                self.init_signals()
+                signal = 0.0
+                position = 0.0
+            else:
+                signal = 1.0
+                position = signal - self.signals[ticker].iloc[-1].signal
+            self.signals[ticker].loc[history.loc[ticker].iloc[-1].name] = [position, signal]
+        return True
 
     def init_plot(self, plot_area):
         pass

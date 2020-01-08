@@ -5,21 +5,22 @@ from core.portfolio.manager import PortfolioManager
 
 
 class BaseStrategy(ABC):
-    def __init__(self, initial_capital, *args, **kwargs):
+    def __init__(self, tickers, initial_capital, *args, **kwargs):
         super().__init__()
         # self.plot_area = plot_area
         self.initial_capital = initial_capital
+        self.tickers = tickers
         self.i = 0
-        self.signals = None
+        self.signals = dict()
 
-        self.portfolio_manager = PortfolioManager(initial_capital)
+        self.portfolio_manager = PortfolioManager(tickers, initial_capital)
 
     @abstractmethod
     def init_signals(self):
         pass
 
     @abstractmethod
-    def handle_data(self, history):
+    def calc_signals(self, history):
         pass
 
     @abstractmethod
@@ -33,6 +34,12 @@ class BaseStrategy(ABC):
     @abstractmethod
     def reset_column_data_sources(self):
         pass
+
+    def handle_data(self, history):
+        self.i += 1
+        succeded = self.calc_signals(history)
+        if succeded:
+            self.portfolio_manager.update(self.signals, history)
 
     def evaluate_strategy(self):
         self.portfolio_manager.calc_portfolio_metrics()

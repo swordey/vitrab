@@ -3,12 +3,13 @@ import numpy as np
 
 
 class PortfolioManager:
-    def __init__(self, initial_capital):  # signals, stock_data):
-        self.initial_capital = initial_capital
-        self.current_cash = initial_capital
-        # self.signals = signals
-        self.stock_data = None
+    def __init__(self, tickers, initial_capital, percentage=None):  # signals, stock_data):
+        self.tickers = tickers
+        self.initial_capital = {}
+        self.current_cash = {}
+        self.set_initial_capitals(initial_capital, percentage)
 
+        self.stock_data = None
         self.portfolio = None
         self.init_portfolio()
 
@@ -17,101 +18,90 @@ class PortfolioManager:
         self.sharp_ratio = None
         self.cagr = None
 
+    def set_initial_capitals(self, initial_capital, percentage):
+        if percentage is None:
+            num_of_tickers = len(self.tickers)
+            for ticker in self.tickers:
+                self.initial_capital[ticker] = initial_capital / num_of_tickers
+                self.current_cash[ticker] = initial_capital / num_of_tickers
+        else:
+            for ticker, perc in zip(self.tickers, percentage):
+                self.initial_capital[ticker] = initial_capital * perc
+                self.current_cash[ticker] = initial_capital * perc
+
     def init_portfolio(self):
         self.portfolio = pd.DataFrame(dict(Date=[],
-                                           num_shares=[],
-                                           holdings=[],
                                            cash=[],
                                            total=[],
                                            returns=[]))
+        for ticker in self.tickers:
+            self.portfolio[ticker] = []
+            self.portfolio[ticker+"_holdings"] = []
         self.portfolio.set_index("Date", inplace=True)
 
     def get_last_portfolio_value(self):
-        if self.portfolio.shape[0]>0:
+        if self.portfolio.shape[0] > 0:
             return self.portfolio.iloc[-1]
         else:
             return None
 
     def update(self, signals, stock_data):
-        last_signal = signals.iloc[-1]
-        last_stock_data = stock_data.iloc[-1]
-        self.stock_data = stock_data
-
-        position = int(last_signal.positions)
-        # print(position)
-        if position == 1:
-            num_shares = int(self.current_cash / last_stock_data["Close"])
-            # print(f"Num shares {num_shares}")
-            holdings = num_shares * last_stock_data["Close"]
-            # print(f"Holdings {holdings}")
-            cash = self.current_cash - holdings
-            # print(f"Cash {cash}")
-            self.current_cash = cash
-            total = holdings + cash
-            # print(f"Total {total}")
-            self.portfolio.loc[last_signal.name] = [cash, holdings, num_shares, 0, total]
-        elif position == -1:
-            last_portfolio = self.portfolio.iloc[-1]
-            # print(last_portfolio)
-            cash = last_portfolio.cash + last_portfolio.num_shares * last_stock_data["Close"]
-            self.current_cash = cash
-            num_shares = 0
-            holdings = 0
-            total = holdings + cash
-            self.portfolio.loc[last_signal.name] = [cash, holdings, num_shares, 0, total]
-        else:
-            if self.portfolio.shape[0]>0:
+        # current_cash = 0
+        # total = 0
+        last_signal = None
+        for ticker in self.tickers:
+            last_signal = signals[ticker].iloc[-1]
+            last_stock_data = stock_data.loc[ticker].iloc[-1]
+            self.stock_data = stock_data.loc[ticker]
+            position = int(last_signal.positions)
+            if position == 1:
+                num_shares = int(self.current_cash[ticker] / last_stock_data["Close"])
+                holdings = num_shares * last_stock_data["Close"]
+                cash = self.current_cash[ticker] - holdings
+                self.current_cash[ticker] = cash
+                if not self.portfolio.index.isin([last_signal.name]).any():
+                    self.portfolio.loc[last_signal.name] = 0
+                self.portfolio.loc[last_signal.name][ticker] = num_shares
+                self.portfolio.loc[last_signal.name][ticker+"_holdings"] = holdings
+                # self.portfolio.loc[last_signal.name] = [cash, holdings, num_shares, 0, total]
+            elif position == -1:
                 last_portfolio = self.portfolio.iloc[-1]
-                self.portfolio.loc[last_signal.name] = last_portfolio
-                self.portfolio.loc[last_signal.name]["holdings"] = \
-                    self.portfolio.loc[last_signal.name].num_shares * last_stock_data["Close"]
-                self.portfolio.loc[last_signal.name]["total"] = \
-                    self.portfolio.loc[last_signal.name]["holdings"] + \
-                    self.portfolio.loc[last_signal.name]["cash"]
+                cash = last_portfolio.cash + last_portfolio[ticker] * last_stock_data["Close"]
+                self.current_cash[ticker] = cash
+                num_shares = 0
+                holdings = 0
+                if not self.portfolio.index.isin([last_signal.name]).any():
+                    self.portfolio.loc[last_signal.name] = 0
+                self.portfolio.loc[last_signal.name][ticker] = num_shares
+                self.portfolio.loc[last_signal.name][ticker + "_holdings"] = holdings
             else:
-                self.portfolio.loc[last_signal.name] = [self.current_cash, 0, 0, 0, self.current_cash]
-
-
-    # def backtest_portfolio(self):
-    #     # Generate a pandas DataFrame to store quantity held at any “bar” timeframe
-    #     positions = pd.DataFrame(index=self.signals.index).fillna(0.0)
-    #     positions["Stock"] = 100 * self.signals['signal']   # Transact 100 shares on a signal
-    #
-    #     # self.portfolio = positions
-    #     # self.portfolio["cash"] = self.initial_capital
-    #     #
-    #     # for idx in self.portfolio.shape[1]:
-    #     #     self.portfolio["Stock"][idx] = int(self.portfolio["cash"][idx] / self.stock_data['Close']) * self.stock_data['Close']
-    #     #     self.portfolio['holdings'][idx] = self.portfolio["Stock"][idx]
-    #     #
-    #     #     self.portfolio['cash'][idx] = self.initial_capital - (pos_diff.multiply(self.stock_data['Close'], axis=0)).sum(
-    #     #         axis=1).cumsum()
-    #
-    #     # Initialize the portfolio with value owned
-    #     self.portfolio = positions.multiply(self.stock_data['Close'], axis=0)
-    #
-    #     # Store the difference in shares owned
-    #     pos_diff = positions.diff()
-    #
-    #     # Add `holdings` to portfolio
-    #     self.portfolio['holdings'] = (positions.multiply(self.stock_data['Close'], axis=0)).sum(axis=1)
-    #
-    #     # Add `cash` to portfolio
-    #     self.portfolio['cash'] = self.initial_capital - (pos_diff.multiply(self.stock_data['Close'], axis=0)).sum(axis=1).cumsum()
-    #
-    #     # Add `total` to portfolio
-    #     self.portfolio['total'] = self.portfolio['cash'] + self.portfolio['holdings']
-    #
-    #     # Add `returns` to portfolio
-    #     self.portfolio['returns'] = self.portfolio['total'].pct_change()
+                if self.portfolio.shape[0] > 0:
+                    last_portfolio = self.portfolio.iloc[-1]
+                    if not self.portfolio.index.isin([last_signal.name]).any():
+                        self.portfolio.loc[last_signal.name] = last_portfolio
+                    self.portfolio.loc[last_signal.name][ticker + "_holdings"] = \
+                        self.portfolio.loc[last_signal.name][ticker] * last_stock_data["Close"]
+                else:
+                    self.portfolio.loc[last_signal.name] = 0
+                    self.portfolio.loc[last_signal.name][ticker] = 0
+                    self.portfolio.loc[last_signal.name][ticker + "_holdings"] = 0
+        current_cash = 0
+        total = 0
+        for ticker in self.tickers:
+            current_cash += self.current_cash[ticker]
+            total += self.portfolio.loc[last_signal.name][ticker+"_holdings"]
+        total += current_cash
+        self.portfolio.loc[last_signal.name]["cash"] = current_cash
+        self.portfolio.loc[last_signal.name]["total"] = total
 
     def calc_portfolio_metrics(self):
-        self.calc_returns()
+        if self.portfolio.shape[0] > 0:
+            self.calc_returns()
 
-        self.calc_portfolio_total()
-        self.calc_portfolio_total_return()
-        self.calc_sharp_ratio()
-        self.calc_cagr()
+            self.calc_portfolio_total()
+            self.calc_portfolio_total_return()
+            self.calc_sharp_ratio()
+            self.calc_cagr()
 
     def calc_returns(self):
         self.portfolio["returns"] = self.portfolio['total'].pct_change()
