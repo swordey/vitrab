@@ -53,8 +53,6 @@ class GUI:
         # value=stock_names[0], options=stock_names, sizing_mode="stretch_both")
         self.tickerMultiSelector = MultiSelect(title="Select:", value=[stock_names[0]],
                                    options=stock_names, sizing_mode="stretch_both")
-        self.help = Div(text="Hint: If you select more, the money will be splitted into equal chunks for each stock",
-                        sizing_mode="stretch_both")
         self.periodStartText = Div(text="Start date", width=int(self.ui_width*0.2))
         self.periodStart = DatePicker(value='10/1/2010', min_date="1/1/1900", max_date=date.today(), sizing_mode="stretch_both")
         self.periodEndText = Div(text="End date", width=int(self.ui_width*0.2))
@@ -87,7 +85,6 @@ class GUI:
         self.UIPanel = layout([self.DataSelectionTitle],
                               [self.tickerMultiSelector],
                               # [self.tickerSelector],
-                              [self.help],
                               [self.periodStartText, self.periodStart],
                               [self.periodEndText, self.periodEnd],
                               [self.TradingAlgoParamsTitle],
