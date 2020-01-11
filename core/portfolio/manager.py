@@ -46,8 +46,6 @@ class PortfolioManager:
             return None
 
     def update(self, signals, stock_data):
-        # current_cash = 0
-        # total = 0
         last_signal = None
         for ticker in self.tickers:
             last_signal = signals[ticker].iloc[-1]
@@ -94,9 +92,11 @@ class PortfolioManager:
         self.portfolio.loc[last_signal.name]["cash"] = current_cash
         self.portfolio.loc[last_signal.name]["total"] = total
 
+        self.calc_portfolio_metrics()
+
     def calc_portfolio_metrics(self):
         if self.portfolio.shape[0] > 0:
-            self.calc_returns()
+            # self.calc_returns()
 
             self.calc_portfolio_total()
             self.calc_portfolio_total_return()
@@ -114,7 +114,8 @@ class PortfolioManager:
 
     def calc_sharp_ratio(self):
         # Isolate the returns of your strategy
-        returns = self.portfolio['returns']
+        # returns = self.portfolio['returns']
+        returns = self.portfolio['total'].pct_change()
 
         # annualized Sharpe ratio
         sharpe_ratio = np.sqrt(252) * (returns.mean() / returns.std())
@@ -126,5 +127,8 @@ class PortfolioManager:
         days = (self.stock_data.index[-1] - self.stock_data.index[0]).days
 
         # Calculate the CAGR
-        self.cagr = round((((self.portfolio['total'][-1] / self.portfolio['total'][0]) ** (365.0 / days)) - 1)*100, 2)
+        if days > 0:
+            self.cagr = round((((self.portfolio['total'][-1] / self.portfolio['total'][0]) ** (365.0 / days)) - 1)*100, 2)
+        else:
+            self.cagr = 0
 

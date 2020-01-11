@@ -16,7 +16,10 @@ from bokeh.models.widgets import Select
 from bokeh.models.widgets import MultiSelect
 from bokeh.models.widgets import TextInput
 from bokeh.models.widgets.inputs import DatePicker
+from bokeh.models.callbacks import CustomJS
 from bokeh.plotting import figure, curdoc
+
+from bokeh.embed import components
 
 from core.trader import Trader
 
@@ -53,7 +56,7 @@ class GUI:
         self.help = Div(text="Hint: If you select more, the money will be splitted into equal chunks for each stock",
                         sizing_mode="stretch_both")
         self.periodStartText = Div(text="Start date", width=int(self.ui_width*0.2))
-        self.periodStart = DatePicker(value='10/1/2006', min_date="1/1/1900", max_date=date.today(), sizing_mode="stretch_both")
+        self.periodStart = DatePicker(value='10/1/2010', min_date="1/1/1900", max_date=date.today(), sizing_mode="stretch_both")
         self.periodEndText = Div(text="End date", width=int(self.ui_width*0.2))
         self.periodEnd = DatePicker(value='1/1/2012', min_date="1/1/1900", max_date=date.today(), sizing_mode="stretch_both")
 
@@ -65,8 +68,8 @@ class GUI:
                                      sizing_mode="stretch_both")
 
         self.BackTestingParamsTitle = Div(text="<b>Backtesting parameters</b>")
-        self.capitalMoney = TextInput(value="100000", title="Initial capital", sizing_mode="stretch_both")
-        self.simulationSpeed = TextInput(value="10", title="Simulation speed [Data/s]", sizing_mode="stretch_both")
+        self.capitalMoney = TextInput(value="100000", title="Initial capital [$]", sizing_mode="stretch_both")
+        self.simulationSpeed = TextInput(value="15", title="Simulation speed [Data/s]", sizing_mode="stretch_both")
 
         self.simulateButton = Button(label="Simulate", sizing_mode="stretch_both")
         self.stopButton = Button(label="Stop", sizing_mode="stretch_both")
@@ -131,6 +134,7 @@ class GUI:
 
         curdoc().add_root(grid([[self.UIPanel, tabs]]))
         curdoc().title = "Visual Trading Backtester"
+
         self.trader = Trader()
 
     def create_pricemovement_visu(self):
@@ -236,6 +240,9 @@ class GUI:
                 self.Bars[ticker].data = self.stockData[ticker].data
         self.periodic_callback_id = 0
 
+        self.trader.evaluate()
+        self.plot_strategy_results()
+
     def clear_figures(self):
         self.create_column_data_sources()
         self.create_pricemovement_visu()
@@ -313,19 +320,20 @@ class GUI:
         self.portfolioData.stream(new_data)
 
     def plot_strategy_results(self):
-        self.PortfolioTotal.text = self.PortfolioTotal.text.split(":")[0] + \
+        if self.trader.get_portfolio_manager().portfolio_total is not None:
+            self.PortfolioTotal.text = self.PortfolioTotal.text.split(":")[0] + \
+                                       ": " + \
+                                       str(self.trader.get_portfolio_manager().portfolio_total)
+            self.PortfolioTotalReturn.text = self.PortfolioTotalReturn.text.split(":")[0] + \
+                                             ": " + \
+                                             str(self.trader.get_portfolio_manager().portfolio_total_return) + \
+                                             "%"
+            self.SharpRatio.text = self.SharpRatio.text.split(":")[0] + \
                                    ": " + \
-                                   str(self.trader.get_portfolio_manager().portfolio_total)
-        self.PortfolioTotalReturn.text = self.PortfolioTotalReturn.text.split(":")[0] + \
-                                         ": " + \
-                                         str(self.trader.get_portfolio_manager().portfolio_total_return) + \
-                                         "%"
-        self.SharpRatio.text = self.SharpRatio.text.split(":")[0] + \
-                               ": " + \
-                               str(self.trader.get_portfolio_manager().sharp_ratio)
-        self.CAGR.text = self.CAGR.text.split(":")[0] + \
-                         ": " + \
-                         str(self.trader.get_portfolio_manager().cagr)+"%"
+                                   str(self.trader.get_portfolio_manager().sharp_ratio)
+            self.CAGR.text = self.CAGR.text.split(":")[0] + \
+                             ": " + \
+                             str(self.trader.get_portfolio_manager().cagr)+"%"
 
     # Update visus
     def update_visu(self):
@@ -341,5 +349,3 @@ class GUI:
         self.plot_stock_price(d)
         self.plot_buy_sell_signals()
         self.plot_portfolio()
-
-

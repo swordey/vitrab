@@ -1,0 +1,61 @@
+{% from macros import embed %}
+
+<!DOCTYPE html>
+<html lang="en">
+  {% block head %}
+  <head>
+    {% block inner_head %}
+      <meta charset="utf-8">
+      <title>{% block title %}{{ title | e if title else "Bokeh Plot" }}{% endblock %}</title>
+      {% block preamble %}{% endblock %}
+      {% block resources %}
+        {% block css_resources %}
+          {{ bokeh_css | indent(8) if bokeh_css }}
+        {% endblock %}
+        {% block js_resources %}
+          {{ bokeh_js | indent(8) if bokeh_js }}
+        {% endblock %}
+      {% endblock %}
+      {% block postamble %}{% endblock %}
+    {% endblock %}
+  </head>
+  {% endblock %}
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  {% block body %}
+  <body>
+  <!-- The Modal -->
+    <div id="id01" class="w3-modal" style="display: block;">
+      <div class="w3-modal-content">
+        <div class="w3-container">
+          <span onclick="document.getElementById('id01').style.display='none'"
+          class="w3-button w3-display-topright">&times;</span>
+          <h3>Welcome to Visual Trading Backtester!</h3>
+          <p>On this platform you can test out trading strategies on historical market data.</p>
+          <p>How to use:</p>
+          <ol>
+            <li>Select a stock/stocks to trade with.</li>
+            <li>Select period in the past when you want to test</li>
+            <li>Select a trading strategy to determine when to buy or sell stocks</li>
+            <li>Set your money (initial capital) you would invest in stocks</li>
+            <li>Click on "Simulate" button to start backtesting.</li>
+          </ol>
+          <p>HINT: You can select more stocks, then the initial capital will be splitted equally between stocks.</p>
+        </div>
+      </div>
+    </div>
+    {% block inner_body %}
+      {% block contents %}
+        {% for doc in docs %}
+          {{ embed(doc) if doc.elementid }}
+          {% for root in doc.roots %}
+            {% block root scoped %}
+              {{ embed(root) | indent(10) }}
+            {% endblock %}
+          {% endfor %}
+        {% endfor %}
+      {% endblock %}
+      {{ plot_script | indent(8) }}
+    {% endblock %}
+  </body>
+  {% endblock %}
+</html>
