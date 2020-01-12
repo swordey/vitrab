@@ -67,7 +67,7 @@ class GUI:
 
         self.BackTestingParamsTitle = Div(text="<b>Backtesting parameters</b>")
         self.capitalMoney = TextInput(value="100000", title="Initial capital [$]", sizing_mode="stretch_both")
-        self.simulationSpeed = TextInput(value="15", title="Simulation speed [Data/s]", sizing_mode="stretch_both")
+        # self.simulationSpeed = TextInput(value="15", title="Simulation speed [Data/s]", sizing_mode="stretch_both")
 
         self.simulateButton = Button(label="Simulate", sizing_mode="stretch_both")
         self.stopButton = Button(label="Stop", sizing_mode="stretch_both")
@@ -91,7 +91,7 @@ class GUI:
                               [self.methodSelector],
                               [self.BackTestingParamsTitle],
                               [self.capitalMoney],
-                              [self.simulationSpeed],
+                              # [self.simulationSpeed],
                               [self.simulateButton, self.stopButton],
                               [self.BackTestingResultsTitle],
                               [self.PortfolioTotal],
@@ -225,7 +225,8 @@ class GUI:
 
         self.periodic_callback_id = \
             curdoc().add_periodic_callback(self.update_visu,
-                                           int(1000/float(self.simulationSpeed.value)))  # num of ms to wait
+                                           int(1000/float(10)))  # num of ms to wait
+                                           # int(1000/float(self.simulationSpeed.value)))  # num of ms to wait
 
     def stop_animation(self):
         # Stop animation, by deleting callback
