@@ -61,8 +61,8 @@ class GUI:
         # Trading Strategy selection
         self.TradingAlgoParamsTitle = Div(text="<b>Trading Algorithm Params</b>")
         self.methodSelector = Select(title="Select method",
-                                     value="Moving Average Crossover",
-                                     options=["Buy and Hold", "Moving Average Crossover"],
+                                     value="RSI",
+                                     options=["MACD", "RSI", "Moving Average Crossover", "Buy and Hold"],
                                      sizing_mode="stretch_both")
 
         self.BackTestingParamsTitle = Div(text="<b>Backtesting parameters</b>")
@@ -283,7 +283,7 @@ class GUI:
 
     def plot_buy_sell_signals(self):
         for ticker in self.trader.strategy.tickers:
-            if ticker not in self.trader.strategy.signals:
+            if self.trader.strategy.signals[ticker].shape[0] == 0:
                 return
             curr_position = int(self.trader.get_last_signal_by_ticker(ticker).positions)
             if curr_position == 1:

@@ -47,7 +47,11 @@ class PortfolioManager:
 
     def update(self, signals, stock_data):
         last_signal = None
+        current_cash = 0
+        total = 0
         for ticker in self.tickers:
+            if signals[ticker].shape[0] == 0:
+                continue
             last_signal = signals[ticker].iloc[-1]
             last_stock_data = stock_data.loc[ticker].iloc[-1]
             self.stock_data = stock_data.loc[ticker]
@@ -83,19 +87,20 @@ class PortfolioManager:
                     self.portfolio.loc[last_signal.name] = 0
                     self.portfolio.loc[last_signal.name][ticker] = 0
                     self.portfolio.loc[last_signal.name][ticker + "_holdings"] = 0
-        current_cash = 0
-        total = 0
-        for ticker in self.tickers:
+
+        # for ticker in self.tickers:
             current_cash += self.current_cash[ticker]
             total += self.portfolio.loc[last_signal.name][ticker+"_holdings"]
-        total += current_cash
-        self.portfolio.loc[last_signal.name]["cash"] = current_cash
-        self.portfolio.loc[last_signal.name]["total"] = total
 
-        self.calc_portfolio_metrics()
+        total += current_cash
+        if total > 0:
+            self.portfolio.loc[last_signal.name]["cash"] = current_cash
+            self.portfolio.loc[last_signal.name]["total"] = total
+
+            self.calc_portfolio_metrics()
 
     def calc_portfolio_metrics(self):
-        if self.portfolio.shape[0] > 0:
+        if self.portfolio.shape[0] > 2:
             # self.calc_returns()
 
             self.calc_portfolio_total()
@@ -116,11 +121,13 @@ class PortfolioManager:
         # Isolate the returns of your strategy
         # returns = self.portfolio['returns']
         returns = self.portfolio['total'].pct_change()
+        if returns.iloc[-1] != 0:
+            # annualized Sharpe ratio
+            sharpe_ratio = np.sqrt(252) * (returns.mean() / returns.std())
 
-        # annualized Sharpe ratio
-        sharpe_ratio = np.sqrt(252) * (returns.mean() / returns.std())
-
-        self.sharp_ratio = round(sharpe_ratio, 2)
+            self.sharp_ratio = round(sharpe_ratio, 2)
+        else:
+            self.sharp_ratio = None
 
     def calc_cagr(self):
         # Get the number of days in `aapl`

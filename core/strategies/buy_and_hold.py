@@ -26,7 +26,6 @@ class BuyAndHold(BaseStrategy):
                 signal = 1.0
                 position = signal - self.signals[ticker].iloc[-1].signal
             self.signals[ticker].loc[history.loc[ticker].iloc[-1].name] = [position, signal]
-        return True
 
     def init_plot(self, plot_area):
         pass

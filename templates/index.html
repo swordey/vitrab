@@ -29,9 +29,18 @@
         <div class="w3-container">
           <span onclick="document.getElementById('id01').style.display='none'"
           class="w3-button w3-display-topright">&times;</span>
-          <h3>Welcome to Visual Trading Backtester!</h3>
-          <p>On this platform you can test out trading strategies on historical market data.</p>
-          <p>How to use:</p>
+            <h3><b><center>Welcome to Visual Trading Backtester!</center></b></h3>
+          <p>On this platform you can test out trading strategies on historical market data on different stocks.
+             During simulation, you can see the stock price moving, and the signals that the selected strategy
+             produces. Some strategies plot their indicators also. Up arrows show buying, down arrows show selling
+             signals. Maybe the strategy produces multiple buying signals in a row, but as it uses all the money
+             in cash it has during buying to buy as many stocks as it can, it cannot buy new stocks for new buying
+             signals. It sells all stocks for a selling signal, so multiple selling signals won't do anything in a
+             row. Currently this platform uses only daily market data from yahoo finance, and it downloads the data
+             before the simulation, so the simulation will start after a few seconds, if you push the Simulate button.</p>
+          <p><b>Disclaimer:</b> Nothing suggested by this platform can be viewed as a financial advice. Losing money
+          using information from this platform is solely the responsibility of the user.</p>
+          <p><b>How to use:</b></p>
           <ol>
             <li>Select a stock/stocks to trade with.</li>
             <li>Select period in the past when you want to test</li>
@@ -39,7 +48,7 @@
             <li>Set your money (initial capital) you would invest in stocks</li>
             <li>Click on "Simulate" button to start backtesting.</li>
           </ol>
-          <p>HINT: You can select more stocks, then the initial capital will be splitted equally between stocks.</p>
+          <p><b>HINT:</b> You can select more stocks, then the initial capital will be splitted equally between stocks.</p>
         </div>
       </div>
     </div>

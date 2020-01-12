@@ -37,9 +37,8 @@ class BaseStrategy(ABC):
 
     def handle_data(self, history):
         self.i += 1
-        succeded = self.calc_signals(history)
-        if succeded:
-            self.portfolio_manager.update(self.signals, history)
+        self.calc_signals(history)
+        self.portfolio_manager.update(self.signals, history)
 
     def evaluate_strategy(self):
         self.portfolio_manager.calc_portfolio_metrics()

@@ -1,7 +1,7 @@
 #! trader.py
 
 #  Strategies
-from core.strategies import buy_and_hold, sma
+from core.strategies import buy_and_hold, sma, MACD, RSI
 from core.strategies import sma
 
 # DataFetcher
@@ -18,9 +18,13 @@ class Trader:
 
     def initialize(self, tickers, strategy_name, initial_capital, *args):
         if strategy_name == "Moving Average Crossover":
-            self.strategy = sma.SMA(40, 100, tickers, float(initial_capital))
+            self.strategy = sma.SMAStrategy(40, 100, tickers, float(initial_capital))
         elif strategy_name == "Buy and Hold":
             self.strategy = buy_and_hold.BuyAndHold(tickers, float(initial_capital))
+        elif strategy_name == "MACD":
+            self.strategy = MACD.MACDStrategy(tickers, float(initial_capital))
+        elif strategy_name == "RSI":
+            self.strategy = RSI.RSIStrategy(tickers, float(initial_capital))
         else:
             NotImplementedError("Strategy Not Implemented")
 
@@ -39,7 +43,6 @@ class Trader:
         if curr_data is not None:
             self.strategy.handle_data(curr_data)
             self.benchmark_strategy.handle_data(benchmark_data)
-
         return curr_data
 
     def evaluate(self):
