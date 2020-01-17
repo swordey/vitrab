@@ -1,7 +1,7 @@
 #! trader.py
 
 #  Strategies
-from core.strategies import buy_and_hold, sma, MACD, RSI
+from core.strategies import buy_and_hold, sma, MACD, RSI, CCI
 from core.strategies import sma
 
 # DataFetcher
@@ -25,6 +25,8 @@ class Trader:
             self.strategy = MACD.MACDStrategy(tickers, float(initial_capital))
         elif strategy_name == "RSI":
             self.strategy = RSI.RSIStrategy(tickers, float(initial_capital))
+        elif strategy_name == "CCI":
+            self.strategy = CCI.CCIStrategy(tickers, float(initial_capital))
         else:
             NotImplementedError("Strategy Not Implemented")
 

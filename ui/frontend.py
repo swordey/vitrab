@@ -62,7 +62,7 @@ class GUI:
         self.TradingAlgoParamsTitle = Div(text="<b>Trading Algorithm Params</b>")
         self.methodSelector = Select(title="Select method",
                                      value="RSI",
-                                     options=["MACD", "RSI", "Moving Average Crossover", "Buy and Hold"],
+                                     options=["CCI", "MACD", "RSI", "Moving Average Crossover", "Buy and Hold"],
                                      sizing_mode="stretch_both")
 
         self.BackTestingParamsTitle = Div(text="<b>Backtesting parameters</b>")
@@ -77,9 +77,9 @@ class GUI:
         self.PortfolioTotal = Div(text="Portfolio total end value:")
         self.PortfolioTotalReturn = Div(text="Portfolio total return:")
         self.SharpRatio = Div(text="<a href=\"https://www.investopedia.com/terms/s/sharperatio.asp\"  "
-                                   "target=\"_blank\">Sharp Ratio:</a>")
+                                   "target=\"_blank\">Sharp Ratio</a>:")
         self.CAGR = Div(text="<a href=\"https://www.investopedia.com/terms/c/cagr.asp\"  "
-                            "target=\"_blank\">Compound Annual Growth Rate:</a>")
+                             "target=\"_blank\">Compound Annual Growth Rate</a>:")
 
         self.simulateButton.on_click(self.start_animation)
         self.stopButton.on_click(self.stop_animation)
@@ -328,11 +328,11 @@ class GUI:
                                              ": " + \
                                              str(self.trader.get_portfolio_manager().portfolio_total_return) + \
                                              "%"
-            self.SharpRatio.text = self.SharpRatio.text.split(":")[0] + \
-                                   ": " + \
+            self.SharpRatio.text = self.SharpRatio.text.split("</a>")[0] + \
+                                   "</a>: " + \
                                    str(self.trader.get_portfolio_manager().sharp_ratio)
-            self.CAGR.text = self.CAGR.text.split(":")[0] + \
-                             ": " + \
+            self.CAGR.text = self.CAGR.text.split("</a>")[0] + \
+                             "</a>: " + \
                              str(self.trader.get_portfolio_manager().cagr)+"%"
 
     # Update visus
