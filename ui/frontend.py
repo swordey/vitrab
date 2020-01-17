@@ -51,7 +51,7 @@ class GUI:
         stock_names = list(stocks.keys())
         # self.tickerSelector = Select(title="Select:",
         # value=stock_names[0], options=stock_names, sizing_mode="stretch_both")
-        self.tickerMultiSelector = MultiSelect(title="Select:", value=[stock_names[0]],
+        self.tickerMultiSelector = MultiSelect(title="Select a Stock/Stocks:", value=[stock_names[0]],
                                    options=stock_names, sizing_mode="stretch_both")
         self.periodStartText = Div(text="Start date", width=int(self.ui_width*0.2))
         self.periodStart = DatePicker(value='10/1/2010', min_date="1/1/1900", max_date=date.today(), sizing_mode="stretch_both")
@@ -66,18 +66,20 @@ class GUI:
                                      sizing_mode="stretch_both")
 
         self.BackTestingParamsTitle = Div(text="<b>Backtesting parameters</b>")
-        self.capitalMoney = TextInput(value="100000", title="Initial capital [$]", sizing_mode="stretch_both")
+        self.capitalMoney = TextInput(value="100000", title="Money to invest [$]", sizing_mode="stretch_both")
         # self.simulationSpeed = TextInput(value="15", title="Simulation speed [Data/s]", sizing_mode="stretch_both")
 
         self.simulateButton = Button(label="Simulate", sizing_mode="stretch_both")
         self.stopButton = Button(label="Stop", sizing_mode="stretch_both")
 
         # Results
-        self.BackTestingResultsTitle = Div(text="<b>Backtesting results</b>")
-        self.PortfolioTotal = Div(text="Portfolio total:")
+        self.BackTestingResultsTitle = Div(text="<b>Results of the portfolio</b>")
+        self.PortfolioTotal = Div(text="Portfolio total end value:")
         self.PortfolioTotalReturn = Div(text="Portfolio total return:")
-        self.SharpRatio = Div(text="Sharp Ratio:")
-        self.CAGR = Div(text="Compound Annual Growth Rate:")
+        self.SharpRatio = Div(text="<a href=\"https://www.investopedia.com/terms/s/sharperatio.asp\"  "
+                                   "target=\"_blank\">Sharp Ratio:</a>")
+        self.CAGR = Div(text="<a href=\"https://www.investopedia.com/terms/c/cagr.asp\"  "
+                            "target=\"_blank\">Compound Annual Growth Rate:</a>")
 
         self.simulateButton.on_click(self.start_animation)
         self.stopButton.on_click(self.stop_animation)
@@ -124,8 +126,8 @@ class GUI:
         self.candleStickVisu.xaxis.axis_label = 'Date'
         self.candleStickVisu.yaxis.axis_label = 'Price [$]'
 
-        self.tab1 = Panel(child=grid([self.candleStickVisu]), title="Candle")
-        self.tab2 = Panel(child=grid([self.priceMovementVisu]), title="Stock")
+        self.tab1 = Panel(child=grid([self.priceMovementVisu]), title="Stock")
+        self.tab2 = Panel(child=grid([self.candleStickVisu]), title="CandleStick")
         self.tab3 = Panel(child=grid([self.portfolioVisu]), title="Portfolio")
         tabs = Tabs(tabs=[self.tab1, self.tab2, self.tab3])
 
@@ -246,8 +248,8 @@ class GUI:
         self.create_pricemovement_visu()
         self.create_portfolio_visu()
         self.create_candlestick_visu()
-        curdoc().roots[0].children[1][0].tabs[0].child.children[0] = (self.candleStickVisu, 0, 0, 1, 1)
-        curdoc().roots[0].children[1][0].tabs[1].child.children[0] = (self.priceMovementVisu, 0, 0, 1, 1)
+        curdoc().roots[0].children[1][0].tabs[0].child.children[0] = (self.priceMovementVisu, 0, 0, 1, 1)
+        curdoc().roots[0].children[1][0].tabs[1].child.children[0] = (self.candleStickVisu, 0, 0, 1, 1)
         curdoc().roots[0].children[1][0].tabs[2].child.children[0] = (self.portfolioVisu, 0, 0, 1, 1)
 
     def create_column_data_sources(self):
