@@ -59,7 +59,7 @@ class GUI:
         self.portfolioData = ColumnDataSource()
 
         # Data selection
-        self.DataSelectionTitle = Div(text="<center><b>Data Selection</b></center>", sizing_mode="stretch_both")
+        # self.DataSelectionTitle = Div(text="<center><b>Data Selection</b></center>", sizing_mode="stretch_both")
         stock_names = list(stocks.keys())
         # self.tickerSelector = Select(title="Select:",
         # value=stock_names[0], options=stock_names, sizing_mode="stretch_both")
@@ -71,8 +71,8 @@ class GUI:
         self.periodEnd = DatePicker(value='1/1/2012', min_date="1/1/1900", max_date=date.today(), sizing_mode="stretch_both")
 
         # Trading Strategy selection
-        self.TradingAlgoParamsTitle = Div(text="<b>Trading Algorithm Params</b>")
-        self.methodSelector = Select(title="Select strategy",
+        # self.TradingAlgoParamsTitle = Div(text="<b>Trading Algorithm Params</b>")
+        self.methodSelector = Select(title="Select investing strategy",
                                      value=self.selected_strategy,
                                      options=["RSI",
                                               "PPO",
@@ -94,7 +94,7 @@ class GUI:
                                align="end")
         # self.info_button = Button(label="info", sizing_mode="stretch_width", align="end")
 
-        self.BackTestingParamsTitle = Div(text="<b>Backtesting parameters</b>")
+        # self.BackTestingParamsTitle = Div(text="<b>Backtesting parameters</b>")
         self.capitalMoney = TextInput(value="100000", title="Money to invest [$]", sizing_mode="stretch_both")
         # self.simulationSpeed = TextInput(value="15", title="Simulation speed [Data/s]", sizing_mode="stretch_both")
 
@@ -102,9 +102,9 @@ class GUI:
         self.stopButton = Button(label="Stop", sizing_mode="stretch_both")
 
         # Results
-        self.BackTestingResultsTitle = Div(text="<b>Results of the portfolio</b>")
-        self.PortfolioTotal = Div(text="Portfolio total end value:")
-        self.PortfolioTotalReturn = Div(text="Portfolio total return:")
+        self.BackTestingResultsTitle = Div(text="<b>Results of the strategy</b>")
+        self.PortfolioTotal = Div(text="Money at the end:")
+        self.PortfolioTotalReturn = Div(text="Return of investing strategy:")
         self.SharpRatio = Div(text="<a href=\"https://www.investopedia.com/terms/s/sharperatio.asp\"  "
                                    "target=\"_blank\">Sharp Ratio</a>:")
         self.CAGR = Div(text="<a href=\"https://www.investopedia.com/terms/c/cagr.asp\"  "
@@ -113,14 +113,14 @@ class GUI:
         self.simulateButton.on_click(self.start_animation)
         self.stopButton.on_click(self.stop_animation)
 
-        self.UIPanel = layout([self.DataSelectionTitle],
+        self.UIPanel = layout(#[self.DataSelectionTitle],
                               [self.tickerMultiSelector],
                               # [self.tickerSelector],
                               [self.periodStartText, self.periodStart],
                               [self.periodEndText, self.periodEnd],
-                              [self.TradingAlgoParamsTitle],
+                              #[self.TradingAlgoParamsTitle],
                               [self.methodSelector, self.info_button],
-                              [self.BackTestingParamsTitle],
+                              #[self.BackTestingParamsTitle],
                               [self.capitalMoney],
                               # [self.simulationSpeed],
                               [self.simulateButton, self.stopButton],
@@ -355,7 +355,7 @@ class GUI:
     def plot_strategy_results(self):
         if self.trader.get_portfolio_manager().portfolio_total is not None:
             self.PortfolioTotal.text = self.PortfolioTotal.text.split(":")[0] + \
-                                       ": " + \
+                                       ": $" + \
                                        str(self.trader.get_portfolio_manager().portfolio_total)
             self.PortfolioTotalReturn.text = self.PortfolioTotalReturn.text.split(":")[0] + \
                                              ": " + \
