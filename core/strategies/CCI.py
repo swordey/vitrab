@@ -1,5 +1,5 @@
-#! MACD.py
-# Moving Average Convergence Divergence Strategy
+#! CCI.py
+# Commodity Channel Index Strategy
 import numpy as np
 import pandas as pd
 from bokeh.models import ColumnDataSource

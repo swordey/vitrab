@@ -34,9 +34,21 @@ stocks = {
           "SPDR S&P 500": "SPY",
           "Nasdaq-100 Index": "NDX"}
 
+indicator_links = \
+    {
+     "RSI": "https://www.investopedia.com/terms/r/rsi.asp",
+     "CCI": "https://www.investopedia.com/terms/c/cci.asp",
+     "MACD": "https://www.investopedia.com/terms/m/macd.asp",
+     "DEMA": "https://www.investopedia.com/terms/d/double-exponential-moving-average.asp",
+     "PPO": "https://www.investopedia.com/terms/p/ppo.asp",
+     "Moving Average Crossover": "https://www.investopedia.com/articles/active-trading/052014/how-use-moving-average-buy-stocks.asp",
+     "Buy and Hold": "https://www.investopedia.com/terms/b/buyandhold.asp"
+    }
+
 
 class GUI:
     def __init__(self):
+        self.selected_strategy = "RSI"
         self.periodic_callback_id = 0
         self.ui_width = 300
 
@@ -60,10 +72,27 @@ class GUI:
 
         # Trading Strategy selection
         self.TradingAlgoParamsTitle = Div(text="<b>Trading Algorithm Params</b>")
-        self.methodSelector = Select(title="Select method",
-                                     value="RSI",
-                                     options=["CCI", "MACD", "RSI", "Moving Average Crossover", "Buy and Hold"],
-                                     sizing_mode="stretch_both")
+        self.methodSelector = Select(title="Select strategy",
+                                     value=self.selected_strategy,
+                                     options=["RSI",
+                                              "PPO",
+                                              "CCI",
+                                              "MACD",
+                                              "DEMA",
+                                              "Moving Average Crossover",
+                                              "Buy and Hold"],
+                                     width=int(self.ui_width * 0.8))
+
+        self.methodSelector.on_change("value", self.load_indicator_url)
+        self.info_icon = "<img src=\"https://upload.wikimedia.org/wikipedia/commons/4/43/Minimalist_info_Icon.png\" " \
+                         "width=\"30px\" height=\"30px\"" \
+                         ">"
+        self.info = "<a href=\"{0}\" target=\"_blank\">" + \
+                    self.info_icon+"</a>"
+        self.info_button = Div(text=self.info.format(indicator_links[self.selected_strategy]),
+                               sizing_mode="stretch_width",
+                               align="end")
+        # self.info_button = Button(label="info", sizing_mode="stretch_width", align="end")
 
         self.BackTestingParamsTitle = Div(text="<b>Backtesting parameters</b>")
         self.capitalMoney = TextInput(value="100000", title="Money to invest [$]", sizing_mode="stretch_both")
@@ -90,7 +119,7 @@ class GUI:
                               [self.periodStartText, self.periodStart],
                               [self.periodEndText, self.periodEnd],
                               [self.TradingAlgoParamsTitle],
-                              [self.methodSelector],
+                              [self.methodSelector, self.info_button],
                               [self.BackTestingParamsTitle],
                               [self.capitalMoney],
                               # [self.simulationSpeed],
@@ -135,6 +164,10 @@ class GUI:
         curdoc().title = "Visual Trading Backtester"
 
         self.trader = Trader()
+
+    def load_indicator_url(self, attr, old, new):
+        self.selected_strategy = new
+        curdoc().roots[0].children[0][0].children[5].children[1].text = self.info.format(indicator_links[self.selected_strategy])
 
     def create_pricemovement_visu(self):
         self.priceMovementVisu = figure(toolbar_location=None, x_axis_type='datetime', sizing_mode="stretch_both")

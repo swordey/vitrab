@@ -57,14 +57,15 @@ class PortfolioManager:
             self.stock_data = stock_data.loc[ticker]
             position = int(last_signal.positions)
             if position == 1:
+                last_portfolio = self.portfolio.iloc[-1]
                 num_shares = int(self.current_cash[ticker] / last_stock_data["Close"])
                 holdings = num_shares * last_stock_data["Close"]
                 cash = self.current_cash[ticker] - holdings
                 self.current_cash[ticker] = cash
                 if not self.portfolio.index.isin([last_signal.name]).any():
                     self.portfolio.loc[last_signal.name] = 0
-                self.portfolio.loc[last_signal.name][ticker] = num_shares
-                self.portfolio.loc[last_signal.name][ticker+"_holdings"] = holdings
+                self.portfolio.loc[last_signal.name][ticker] = num_shares + last_portfolio[ticker]
+                self.portfolio.loc[last_signal.name][ticker+"_holdings"] = holdings + last_portfolio[ticker+"_holdings"]
                 # self.portfolio.loc[last_signal.name] = [cash, holdings, num_shares, 0, total]
             elif position == -1:
                 last_portfolio = self.portfolio.iloc[-1]
