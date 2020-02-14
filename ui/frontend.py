@@ -167,7 +167,7 @@ class GUI:
 
     def load_indicator_url(self, attr, old, new):
         self.selected_strategy = new
-        curdoc().roots[0].children[0][0].children[5].children[1].text = self.info.format(indicator_links[self.selected_strategy])
+        curdoc().roots[0].children[0][0].children[3].children[1].text = self.info.format(indicator_links[self.selected_strategy])
 
     def create_pricemovement_visu(self):
         self.priceMovementVisu = figure(toolbar_location=None, x_axis_type='datetime', sizing_mode="stretch_both")
