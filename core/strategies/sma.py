@@ -78,7 +78,6 @@ class SMAStrategy(BaseStrategy):
             self.signalsDataSource[ticker].stream(signal_data)
 
     def __del__(self):
-        # del self.long_mavg
         self.reset_column_data_sources()
 
     def reset_column_data_sources(self):

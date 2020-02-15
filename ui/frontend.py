@@ -59,10 +59,7 @@ class GUI:
         self.portfolioData = ColumnDataSource()
 
         # Data selection
-        # self.DataSelectionTitle = Div(text="<center><b>Data Selection</b></center>", sizing_mode="stretch_both")
         stock_names = list(stocks.keys())
-        # self.tickerSelector = Select(title="Select:",
-        # value=stock_names[0], options=stock_names, sizing_mode="stretch_both")
         self.tickerMultiSelector = MultiSelect(title="Select a Stock/Stocks:", value=[stock_names[0]],
                                    options=stock_names, sizing_mode="stretch_both")
         self.periodStartText = Div(text="Start date", width=int(self.ui_width*0.2))
@@ -71,7 +68,6 @@ class GUI:
         self.periodEnd = DatePicker(value='1/1/2012', min_date="1/1/1900", max_date=date.today(), sizing_mode="stretch_both")
 
         # Trading Strategy selection
-        # self.TradingAlgoParamsTitle = Div(text="<b>Trading Algorithm Params</b>")
         self.methodSelector = Select(title="Select investing strategy",
                                      value=self.selected_strategy,
                                      options=["RSI",
@@ -92,11 +88,8 @@ class GUI:
         self.info_button = Div(text=self.info.format(indicator_links[self.selected_strategy]),
                                sizing_mode="stretch_width",
                                align="end")
-        # self.info_button = Button(label="info", sizing_mode="stretch_width", align="end")
 
-        # self.BackTestingParamsTitle = Div(text="<b>Backtesting parameters</b>")
         self.capitalMoney = TextInput(value="100000", title="Money to invest [$]", sizing_mode="stretch_both")
-        # self.simulationSpeed = TextInput(value="15", title="Simulation speed [Data/s]", sizing_mode="stretch_both")
 
         self.simulateButton = Button(label="Simulate", sizing_mode="stretch_both")
         self.stopButton = Button(label="Stop", sizing_mode="stretch_both")
@@ -113,16 +106,11 @@ class GUI:
         self.simulateButton.on_click(self.start_animation)
         self.stopButton.on_click(self.stop_animation)
 
-        self.UIPanel = layout(#[self.DataSelectionTitle],
-                              [self.tickerMultiSelector],
-                              # [self.tickerSelector],
+        self.UIPanel = layout([self.tickerMultiSelector],
                               [self.periodStartText, self.periodStart],
                               [self.periodEndText, self.periodEnd],
-                              #[self.TradingAlgoParamsTitle],
                               [self.methodSelector, self.info_button],
-                              #[self.BackTestingParamsTitle],
                               [self.capitalMoney],
-                              # [self.simulationSpeed],
                               [self.simulateButton, self.stopButton],
                               [self.BackTestingResultsTitle],
                               [self.PortfolioTotal],
@@ -261,7 +249,6 @@ class GUI:
         self.periodic_callback_id = \
             curdoc().add_periodic_callback(self.update_visu,
                                            int(1000/float(10)))  # num of ms to wait
-                                           # int(1000/float(self.simulationSpeed.value)))  # num of ms to wait
 
     def stop_animation(self):
         # Stop animation, by deleting callback
@@ -290,7 +277,6 @@ class GUI:
         self.Bars = {}
         self.buySignals = {}
         self.sellSignals = {}
-        # self.portfolioData =
         portfolio_data = dict(Date=[], cash=[], total=[], benchmark=[])
         for ticker in self.trader.strategy.tickers:
             self.stockData[ticker] = \
@@ -342,7 +328,6 @@ class GUI:
             return
         new_data = dict(
             Date=[last_portfolio_value.name],
-            # holdings=[last_portfolio_value.holdings],
             cash=[last_portfolio_value.cash],
             total=[last_portfolio_value.total],
             benchmark=[last_benchmark_portfolio_value.total]

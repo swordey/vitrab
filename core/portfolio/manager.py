@@ -3,7 +3,7 @@ import numpy as np
 
 
 class PortfolioManager:
-    def __init__(self, tickers, initial_capital, percentage=None):  # signals, stock_data):
+    def __init__(self, tickers, initial_capital, percentage=None):
         self.tickers = tickers
         self.initial_capital = {}
         self.current_cash = {}
@@ -66,7 +66,6 @@ class PortfolioManager:
                     self.portfolio.loc[last_signal.name] = 0
                 self.portfolio.loc[last_signal.name][ticker] = num_shares + last_portfolio[ticker]
                 self.portfolio.loc[last_signal.name][ticker+"_holdings"] = holdings + last_portfolio[ticker+"_holdings"]
-                # self.portfolio.loc[last_signal.name] = [cash, holdings, num_shares, 0, total]
             elif position == -1:
                 last_portfolio = self.portfolio.iloc[-1]
                 cash = last_portfolio.cash + last_portfolio[ticker] * last_stock_data["Close"]
@@ -89,7 +88,6 @@ class PortfolioManager:
                     self.portfolio.loc[last_signal.name][ticker] = 0
                     self.portfolio.loc[last_signal.name][ticker + "_holdings"] = 0
 
-        # for ticker in self.tickers:
             current_cash += self.current_cash[ticker]
             total += self.portfolio.loc[last_signal.name][ticker+"_holdings"]
 
@@ -102,8 +100,6 @@ class PortfolioManager:
 
     def calc_portfolio_metrics(self):
         if self.portfolio.shape[0] > 2:
-            # self.calc_returns()
-
             self.calc_portfolio_total()
             self.calc_portfolio_total_return()
             self.calc_sharp_ratio()
@@ -119,8 +115,6 @@ class PortfolioManager:
         self.portfolio_total_return = round((self.portfolio['total'][-1] / self.portfolio['total'][0]-1)*100, 2)
 
     def calc_sharp_ratio(self):
-        # Isolate the returns of your strategy
-        # returns = self.portfolio['returns']
         returns = self.portfolio['total'].pct_change()
         if returns.iloc[-1] != 0:
             # annualized Sharpe ratio
@@ -131,7 +125,7 @@ class PortfolioManager:
             self.sharp_ratio = None
 
     def calc_cagr(self):
-        # Get the number of days in `aapl`
+        # Get the number of days
         days = (self.stock_data.index[-1] - self.stock_data.index[0]).days
 
         # Calculate the CAGR

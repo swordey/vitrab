@@ -10,8 +10,6 @@ from core.data.data_fetcher import DataFetcher
 
 class Trader:
     def __init__(self):
-        # self.plot_area = plot_area
-
         self.dataFetcher = DataFetcher()
         self.strategy = None
         self.benchmark_strategy = None

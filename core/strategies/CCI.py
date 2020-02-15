@@ -69,7 +69,6 @@ class CCIStrategy(BaseStrategy):
                     self.trend.duration += 1
                     signal = 0
                     position = -1
-                    # self.advice('short');
                 elif self.cci.result >= self.config.uplevel and self.trend.direction != 'overbought':
                     self.trend.duration = 1
                     self.trend.direction = 'overbought'
@@ -79,7 +78,6 @@ class CCIStrategy(BaseStrategy):
                         self.trend.adviced = True
                         signal = 0
                         position = -1
-                        # self.advice('short')
                 elif self.cci.result >= self.config.uplevel:
                     self.trend.duration += 1
                     if self.trend.duration >= self.config.persisted:
@@ -92,7 +90,6 @@ class CCIStrategy(BaseStrategy):
                     self.trend.duration += 1
                     signal = 1
                     position = 1
-                    # self.advice('long');
                 elif self.cci.result <= self.config.downlevel and self.trend.direction != 'oversold':
                     self.trend.duration = 1
                     self.trend.direction = 'oversold'
@@ -102,7 +99,6 @@ class CCIStrategy(BaseStrategy):
                         self.trend.adviced = True
                         signal = 1
                         position = 1
-                        # this.advice('long');
                 elif self.cci.result <= self.config.downlevel:
                     self.trend.duration += 1
                     if self.trend.duration >= self.config.persisted:
@@ -112,7 +108,6 @@ class CCIStrategy(BaseStrategy):
                             self.trend = CCITrend("nodirection")
                         else:
                             self.trend.duration += 1
-                        # this.advice()
                         signal = 0
                         position = 0
             else:

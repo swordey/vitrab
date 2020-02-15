@@ -64,5 +64,8 @@ class DataFetcher:
                             names=['Ticker', 'Date'])
             return h_df, b_df
         else:
+            # Data fetcher could work with real time data
+            # it would just return with the newest data for
+            # fetch_data() for each call
             pass
 

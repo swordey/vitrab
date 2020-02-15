@@ -7,7 +7,6 @@ from core.portfolio.manager import PortfolioManager
 class BaseStrategy(ABC):
     def __init__(self, tickers, initial_capital, *args, **kwargs):
         super().__init__()
-        # self.plot_area = plot_area
         self.initial_capital = initial_capital
         self.tickers = tickers
         self.i = 0
@@ -43,15 +42,9 @@ class BaseStrategy(ABC):
     def evaluate_strategy(self):
         self.portfolio_manager.calc_portfolio_metrics()
 
-    # def __del__(self):
-    #     self.reset_column_data_sources()
-
     @staticmethod
     def convert_to_df(data):
         df = pd.DataFrame(data)
         df.set_index("Date", inplace=True)
         return df
-    #
-    # def update_history(self, data):
-    #     self.history[data.Index] =
 
