@@ -1,8 +1,8 @@
 # VITRAB - Visual Trading Backtester
 This a bokeh platform where you can visualize different trading strategies, on different historical data.
 
-![](app/imgs/showcase.gif)
-![](app/imgs/showcase1.gif)
+![](imgs/showcase.gif)
+![](imgs/showcase1.gif)
 
 ## Fun facts
 * You can visualize ohlc (open-high-low-close) data as everyone with candles
